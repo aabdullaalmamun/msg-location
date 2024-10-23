@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Anonymous Email with Live Location</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+        // Initialize EmailJS when the page loads
+        window.onload = function() {
+            emailjs.init("8f7k69plsPLGarLDr");  // Make sure this is your actual public key
+        }
+
+        // Function to send email with both message and location
+        function sendMailWithLocation(){
+            const message = document.querySelector("#message").value;
+            const toEmail = "YOUR_EMAIL_ADDRESS";  // Add your recipient's email here
+
+            // Get the user's location and send the email
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    const params = {
+                        message: message,
+                        location: `Latitude: ${latitude}, Longitude: ${longitude}`,
+                        to_email: toEmail
+                    };
+
+                    var serviceID = "service_uuneiqk";
+                    var templateID = "template_fp5e37j";
+
+                    emailjs.send(serviceID, templateID, params)
+                    .then(function(res) {
+                        alert("Email with location sent successfully!");
+                    })
+                    .catch(function(error) {
+                        alert("Failed to send email: " + JSON.stringify(error));
+                    });
+                }, function(error) {
+                    alert("Unable to retrieve location: " + error.message);
+                });
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Send Anonymous Message with Location</h1>
+        <form id="messageForm">
+            <label for="message">Your message:</label>
+            <textarea id="message" required></textarea><br>
+            <button type="button" onclick="sendMailWithLocation();">Send Message with Location</button>
+        </form>
+        <div id="status"></div>
+    </div>
+</body>
+</html>
